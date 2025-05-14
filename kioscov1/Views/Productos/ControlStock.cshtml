@@ -1,0 +1,89 @@
+﻿@model IEnumerable<kioscov1.Models.Entities.Producto>
+@{
+    ViewData["Title"] = "Control de Stock";
+}
+
+<h1>@ViewBag.Title</h1>
+
+<table class="table table-bordered" id="tableStock">
+    <thead>
+        <tr>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model) {
+
+            <tr data-id="@p.Id">
+                <td>@p.CodigoBarra</td>
+                <td>@p.Nombre</td>
+                <td>
+                    <input type="number" class="form-control stock-input" value="@p.Stock" data-original="@p.Stock"/> 
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-success" id="btnGuardarStock">Guardar cambios</button>
+<div id="spinner" class="mt-2" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Guardando...</span>
+    </div>
+    <span class="ms-2">Guardando cambios...</span>
+</div>
+<button class="btn btn-danger" id="cancelar">Cancelar</button>
+
+@section Scripts {
+    <script>
+        $("#btnGuardarStock").on("click", function () {
+            $("#spinner").show();
+            $("#btnGuardarStock").prop("disabled", true);
+            let productosActualizados = [];
+            $("#tableStock tbody tr").each(function(){
+                const id = $(this).data("id");
+                const stock = parseInt($(this).find(".stock-input").val());
+
+                productosActualizados.push({
+                    Id: id,
+                    Stock: stock
+                });
+            });
+  
+            console.log(productosActualizados);
+            $.ajax({
+                url:'/Productos/ActualizarStock',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(productosActualizados),
+                success: function(){
+                    alert("Productos actualizados correctamente.");
+                    window.location.href = '/Productos/Index';
+                },
+                error: function(){
+                    alert("Error al guardar el stock.");
+                },
+                complete: function() {
+                    $("#spinner").hide();
+                    $("#btnGuardarStock").prop("disabled", false);
+                }
+            });
+        });
+
+        $("#cancelar").on("click", function(){
+            $(".stock-input").each(function () {
+                    const original = $(this).data("original");
+                    $(this).val(original);
+                });
+
+                $("#spinner").hide();
+                $("#btnGuardarStock").prop("disabled", false);
+         });
+
+    </script>
+}
+
+
+

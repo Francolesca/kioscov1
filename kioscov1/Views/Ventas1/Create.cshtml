@@ -188,7 +188,7 @@
 
             console.log(oVentaVM);
 
-            jQuery.ajax({
+            $.ajax({
                 url:  '@Url.Action("Create", "Ventas1")',
                 type: "POST",
                 data: JSON.stringify(oVentaVM),

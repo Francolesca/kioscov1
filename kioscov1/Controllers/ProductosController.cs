@@ -19,6 +19,36 @@ namespace kioscov1.Controllers
             _context = context;
         }
 
+        public IActionResult ControlStock() 
+        {
+            var productos = _context.Productos.ToList();
+            return View(productos);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActualizarStock([FromBody] List<ProductoStockUpdate> productos)
+        {
+            foreach (var p in productos)
+            {
+                var producto = await _context.Productos.FindAsync(p.Id);
+                if (producto != null)
+                {
+                    producto.Stock = p.Stock;
+                    _context.Update(producto);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        public class ProductoStockUpdate
+        {
+            public int Id { get; set; }
+            public int Stock { get; set; }
+        }
+
+
         // GET: Productos
         public async Task<IActionResult> Index()
         {
@@ -153,5 +183,6 @@ namespace kioscov1.Controllers
         {
             return _context.Productos.Any(e => e.Id == id);
         }
+
     }
 }

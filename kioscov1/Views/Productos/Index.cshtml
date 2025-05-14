@@ -7,13 +7,17 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Crear Nuevo</a>
 </p>
+<p>
+    <a asp-action="ControlStock">Control de Stock</a>
+</p>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CodigoBarra)
+                Codigo
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)
@@ -24,11 +28,16 @@
             <th>
                 @Html.DisplayNameFor(model => model.Stock)
             </th>
+            <th>Estado de Stock</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
+            var estado = item.Stock == 0 ? "Sin stock" :
+            item.Stock <= 10 ? "Bajo" : "Normal";
+            var claseFila = item.Stock == 0 ? "table-danger" :
+            item.Stock <= 10 ? "table-warning" : "";
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.CodigoBarra)
@@ -42,10 +51,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Stock)
             </td>
+            <td class="@claseFila">@estado</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
             </td>
         </tr>
 }
