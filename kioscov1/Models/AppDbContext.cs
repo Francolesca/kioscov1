@@ -13,6 +13,9 @@ namespace kioscov1.Models
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<DetalleVenta> DetallesVenta { get; set; }
+        public DbSet<MovimientoStock> MovimientosStock{ get; set; }
+        public DbSet<DetalleMovimientoStock> DetallesMovimientosStock { get; set; }
+        public DbSet<TurnoCaja> TurnosCaja { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +26,18 @@ namespace kioscov1.Models
                 .WithMany(v => v.Detalles)
                 .HasForeignKey(a => a.VentaId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DetalleMovimientoStock>()
+                .HasOne(a => a.MovimientoStock)
+                .WithMany(v => v.Detalles)
+                .HasForeignKey(a => a.MovimientoStockId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TurnoCaja>()
+                .HasMany(t => t.Ventas)
+                .WithOne(v => v.TurnoCaja)
+                .HasForeignKey(v => v.TurnoCajaId);
         }
+        
     }
 }

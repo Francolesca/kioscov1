@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using kioscov1.Models;
 
@@ -11,9 +12,11 @@ using kioscov1.Models;
 namespace kioscov1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250514232215_Registro de Movimiento de Stock")]
+    partial class RegistrodeMovimientodeStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,35 +131,6 @@ namespace kioscov1.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("kioscov1.Models.Entities.TurnoCaja", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Apertura")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Cierre")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("MontoFinal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("MontoInicial")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UsuarioId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TurnosCaja");
-                });
-
             modelBuilder.Entity("kioscov1.Models.Entities.Venta", b =>
                 {
                     b.Property<int>("Id")
@@ -171,15 +145,10 @@ namespace kioscov1.Migrations
                     b.Property<decimal>("Importe")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("TurnoCajaId")
-                        .HasColumnType("int");
-
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TurnoCajaId");
 
                     b.ToTable("Ventas");
                 });
@@ -264,15 +233,6 @@ namespace kioscov1.Migrations
                     b.Navigation("Venta");
                 });
 
-            modelBuilder.Entity("kioscov1.Models.Entities.Venta", b =>
-                {
-                    b.HasOne("kioscov1.Models.Entities.TurnoCaja", "TurnoCaja")
-                        .WithMany("Ventas")
-                        .HasForeignKey("TurnoCajaId");
-
-                    b.Navigation("TurnoCaja");
-                });
-
             modelBuilder.Entity("kioscov1.Models.UserEntity.Usuario", b =>
                 {
                     b.HasOne("kioscov1.Models.UserEntity.Rol", "Rol")
@@ -287,11 +247,6 @@ namespace kioscov1.Migrations
             modelBuilder.Entity("kioscov1.Models.Entities.MovimientoStock", b =>
                 {
                     b.Navigation("Detalles");
-                });
-
-            modelBuilder.Entity("kioscov1.Models.Entities.TurnoCaja", b =>
-                {
-                    b.Navigation("Ventas");
                 });
 
             modelBuilder.Entity("kioscov1.Models.Entities.Venta", b =>

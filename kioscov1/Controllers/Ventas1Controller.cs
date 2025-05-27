@@ -60,6 +60,14 @@ namespace kioscov1.Controllers
         //[ValidateAntiForgeryToken]
         public  async Task<IActionResult> Create([FromBody] VentasVM model)
         {
+            var turno = await _context.TurnosCaja
+                .FirstOrDefaultAsync(t => t.UsuarioId == model.Venta.UsuarioId.ToString() && t.Cierre == null);
+
+            if (turno != null)
+            {
+                model.Venta.TurnoCajaId = turno.Id;
+            }
+
             try
             {
                 Venta oVenta = model.Venta;

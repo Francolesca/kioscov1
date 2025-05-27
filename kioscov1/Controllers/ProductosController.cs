@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using kioscov1.Models;
 using kioscov1.Models.Entities;
+using System.Security.Claims;
 
 namespace kioscov1.Controllers
 {
@@ -26,18 +27,40 @@ namespace kioscov1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ActualizarStock([FromBody] List<ProductoStockUpdate> productos)
+        public async Task<IActionResult> ActualizarStock([FromBody] List<ProductoStockUpdate> productosModificados)
         {
-            foreach (var p in productos)
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Unauthorized("No se pudo identificar el usuario.");
+            }
+
+            var movimiento = new MovimientoStock
+            {
+                Fecha = DateTime.Now,
+                UsuarioId = userIdClaim,
+                Detalles = new List<DetalleMovimientoStock>()
+            };
+
+            foreach (var p in productosModificados)
             {
                 var producto = await _context.Productos.FindAsync(p.Id);
+
                 if (producto != null)
                 {
+                    movimiento.Detalles.Add(new DetalleMovimientoStock
+                    {
+                        ProductoId = p.Id,
+                        StockAnterior = producto.Stock,
+                        StockNuevo = p.Stock,
+                    });
                     producto.Stock = p.Stock;
                     _context.Update(producto);
                 }
             }
-
+            _context.MovimientosStock.Add(movimiento);
             await _context.SaveChangesAsync();
             return Ok();
         }

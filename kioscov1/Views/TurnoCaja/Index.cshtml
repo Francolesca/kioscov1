@@ -1,0 +1,89 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Control de Turno de Caja";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div id="seccionApertura" class="mb-3" style="display: none">
+    <label for="montoInicial" class="form-label">Monto Inicial: </label>
+    <input type="number" value="0" id="montoInicial" step="0.01" class="form-control"/>
+    <button class="btn btn-success mt-2" id="btnAbrir" >Abrir turno de caja</button>
+</div>
+
+<div id="seccionCierre" class="mb-3" style="display: none">
+    <button class="btn btn-danger" id="btnCerrar">Cerrar turno de caja</button>
+</div>
+
+<div id="message" class="mt-3"></div>
+@section Scripts{
+    <script>
+
+        $(document).ready(function (){
+            $.ajax({
+                url: '/TurnoCaja/EstadoTurno',
+                method: 'GET',
+                success: function(data) {
+                        if (data.tieneTurnoAbierto){
+                            $("#seccionCierre").show();
+                        } else {
+                            $("#seccionApertura").show();
+                        }
+                },
+                error: function () {
+                    mostrarMensaje("No se pudo verificar el estado del turno.", true);
+                }
+            });
+         });
+
+        $("#btnAbrir").on("click", function(){
+
+            let monto = parseFloat($("#montoInicial").val());
+            if(isNaN(monto) || monto < 0 ){
+                mostrarMensaje("Ingrese un monto valido!", true);
+                return
+            }
+
+            $.ajax({
+                url: '/TurnoCaja/AbrirTurno',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({montoInicial: monto}),
+                success: function() {
+                        mostrarMensaje("Turno abierto correctamente!");
+                        $("#seccionApertura").hide();
+                        $("#seccionCierre").show();
+                },
+                error: function (xhr) {
+                    mostrarMensaje(xhr.responseText || "Error al abrir turno!", true)
+                }
+             });
+        });
+
+        $("#btnCierre").on("click", function(){
+            $.ajax({
+                url:'/TurnoCaja/CerrarTurno',
+                method: 'POST',
+                success: function(){
+                    mostrarMensaje("Turno cerrado correctamente!");
+                    $("#seccionApertura").show();
+                    $("#seccionCierre").hide();
+                },
+                error: function(xhr){
+                    mostrarMensaje(xhr.responseText || "Error al cerrar turno!", true);
+                }
+            })
+        });
+
+        function mostrarMensaje(mensaje, esError = false) {
+            $("#mensaje").text(mensaje)
+                .removeClass()
+                .addClass(esError ? "alert alert-danger" : "alert alert-success");
+        }
+
+
+
+    </script>
+}

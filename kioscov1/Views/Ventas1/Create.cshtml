@@ -144,10 +144,13 @@
                     );
 
                     $("#txtcantidad").val("1");
+                    $(this).val("").focus();
                     actualizarTotalGeneral();
 
                 } else {
                     alert("Producto no encontrado");
+                    $("#txtcantidad").val("1");
+                    $(this).val("").focus();
                 }
             }
 

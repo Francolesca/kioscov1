@@ -6,6 +6,8 @@
         public DateTime Fecha { get; set; }
         public int UsuarioId {  get; set; }
         public decimal Importe { get; set; }
+        public int? TurnoCajaId { get; set; }
+        public TurnoCaja? TurnoCaja { get; set; }
 
         public ICollection<DetalleVenta>? Detalles { get; set; }
     }
