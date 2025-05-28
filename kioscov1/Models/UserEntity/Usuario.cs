@@ -8,6 +8,6 @@ namespace kioscov1.Models.UserEntity
         public string Nombre { get; set; }
         public string Password { get; set; }
         public int RolId { get; set; }
-        public Rol Rol { get; set; }
+        public Rol? Rol { get; set; }
     }
 }
