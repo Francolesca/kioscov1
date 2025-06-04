@@ -1,0 +1,61 @@
+﻿@model kioscov1.Models.Entities.TurnoCaja
+@{
+    ViewData["Title"] = "Detalle Ventas de Turno";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Apertura)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Apertura)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Cierre)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Cierre)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MontoInicial)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MontoInicial)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MontoFinal)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MontoFinal)
+        </dd>
+    </dl>
+</div>
+@if (Model.Ventas != null && Model.Ventas.Any())
+{
+    <h5>Ventas Realizadas</h5>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Horario de Venta</th>
+                <th>Importe Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Ventas)
+            {
+                <tr>
+                    <td>@item.Fecha</td>
+                    <td>@item.Importe</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div>
+    <a asp-action="HistorialTurnos">Back to List</a>
+</div>
+
