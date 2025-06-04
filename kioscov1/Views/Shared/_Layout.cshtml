@@ -32,8 +32,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Ventas1" asp-action="Index">Ventas</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="TurnoCaja" asp-action="Index">Turno</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" @* asp-area="" asp-controller="TurnoCaja" asp-action="Index" *@
+                                id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Turno</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TurnoCaja" asp-action="Index">Abrir/Cerrar</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="TurnoCaja" asp-action="HistorialTurnos">Historial</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
                         </li>
                     </ul>
                     <div class="d-flex ms-auto">
