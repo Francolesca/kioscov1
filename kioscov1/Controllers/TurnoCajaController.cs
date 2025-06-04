@@ -80,9 +80,7 @@ namespace kioscov1.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim))
-            {
                 return Unauthorized("No se pudo identificar el usuario.");
-            }
 
             var tieneTurnoAbierto = await _context.TurnosCaja
                 .AnyAsync(t => t.UsuarioId == userIdClaim && t.Cierre == null);
@@ -90,8 +88,26 @@ namespace kioscov1.Controllers
             return Ok(new {tieneTurnoAbierto});
         }
 
+        public async Task<IActionResult> HistorialTurnos()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("No se pudo identificar el usuario.");
+            var hTurnos = await _context.TurnosCaja
+                .OrderByDescending(t => t.Apertura)
+                .ToListAsync();
+            return View(hTurnos);
+        }
 
-
+        public async Task<IActionResult>Details(int id)
+        {
+            var turno = await _context.TurnosCaja
+                .Include(t => t.Ventas)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            if (turno == null)
+                return NotFound();
+            return View(turno);
+        }
 
         public IActionResult Index()
         {

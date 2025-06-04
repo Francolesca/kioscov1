@@ -1,0 +1,45 @@
+﻿@model IEnumerable<kioscov1.Models.Entities.TurnoCaja>
+@{
+    ViewData["Title"] = "Historial de Turnos";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UsuarioId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Apertura)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cierre)
+            </th>
+            <th>@Html.DisplayNameFor(model => model.MontoFinal)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UsuarioId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Apertura)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cierre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MontoFinal)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                </td>
+            </tr>
+        }
+
