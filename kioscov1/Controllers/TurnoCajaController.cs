@@ -57,11 +57,20 @@ namespace kioscov1.Controllers
                 return BadRequest("No hay turno abierto");
             
             turno.Cierre = DateTime.Now;
-            turno.MontoFinal = turno.Ventas.Sum(v => v.Importe);
+            turno.MontoFinal = turno.MontoInicial + turno.Ventas.Sum(v => v.Importe);
 
             _context.Update(turno);
             await _context.SaveChangesAsync();
-            return Ok();
+
+            var resTurno = new
+            {
+                MontoInicial = turno.MontoInicial,
+                MontoFinal = turno.MontoFinal,
+                TotalVentas = turno.Ventas.Count(),
+                FechaApertura = turno.Apertura,
+                FechaCierre = turno.Cierre
+            };
+            return Json(resTurno);
 
         }
 
@@ -76,7 +85,7 @@ namespace kioscov1.Controllers
             }
 
             var tieneTurnoAbierto = await _context.TurnosCaja
-                                                                .AnyAsync(t => t.UsuarioId == userIdClaim && t.Cierre == null);
+                .AnyAsync(t => t.UsuarioId == userIdClaim && t.Cierre == null);
 
             return Ok(new {tieneTurnoAbierto});
         }

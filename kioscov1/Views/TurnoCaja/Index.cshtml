@@ -17,7 +17,12 @@
     <button class="btn btn-danger" id="btnCerrar">Cerrar turno de caja</button>
 </div>
 
+
+<div id="resTurno" style="display: none" class="mt-3 alert alert-info">
+</div>
+
 <div id="message" class="mt-3"></div>
+
 @section Scripts{
     <script>
 
@@ -62,14 +67,25 @@
              });
         });
 
-        $("#btnCierre").on("click", function(){
+        $("#btnCerrar").on("click", function(){
             $.ajax({
                 url:'/TurnoCaja/CerrarTurno',
                 method: 'POST',
-                success: function(){
+                success: function(res){
                     mostrarMensaje("Turno cerrado correctamente!");
-                    $("#seccionApertura").show();
+                    
+                    $("#resTurno").html(`
+                        <H5>Resumen del turno<H5>
+                        <p><strong>Apertura:</strong>${new Date(res.fechaApertura).toLocaleString()}</p>
+                        <p><strong>Fecha de cierre:</strong> ${new Date(res.fechaCierre).toLocaleString()}</p>
+                        <p><strong>Monto inicial:</strong> $${res.montoInicial.toFixed(2)}</p>
+                        <p><strong>Monto final:</strong> $${res.montoFinal.toFixed(2)}</p>
+                        <p><strong>Total de ventas:</strong> ${res.totalVentas}</p>
+                    `).fadeIn();
+                    
+                    
                     $("#seccionCierre").hide();
+                    $("#seccionApertura").show();
                 },
                 error: function(xhr){
                     mostrarMensaje(xhr.responseText || "Error al cerrar turno!", true);

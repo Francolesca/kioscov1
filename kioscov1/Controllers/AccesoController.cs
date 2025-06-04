@@ -3,6 +3,7 @@ using kioscov1.Models.UserEntity;
 using kioscov1.ViewsModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -68,6 +69,12 @@ namespace kioscov1.Controllers
                 properties);
 
             return RedirectToAction("Index", "Home");
+        }
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Acceso");
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using kioscov1.Models;
 using kioscov1.Models.Entities;
 using kioscov1.ViewsModel;
+using System.Security.Claims;
 
 namespace kioscov1.Controllers
 {
@@ -23,7 +24,24 @@ namespace kioscov1.Controllers
         // GET: Ventas1
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Ventas.ToListAsync());
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim)) {
+                return Unauthorized("No se pudo verificar el usuario.");
+            }
+
+            var turno = await _context.TurnosCaja
+                .Include(t => t.Ventas)
+                .FirstOrDefaultAsync(t => t.UsuarioId == userIdClaim && t.Cierre == null);
+
+            if (turno == null)
+            {
+                return View(null);
+            }
+            else return View(turno.Ventas);
+
+
+            //return View(await _context.Ventas.ToListAsync());
         }
 
         // GET: Ventas1/Details/5
@@ -35,6 +53,7 @@ namespace kioscov1.Controllers
             }
 
             var venta = await _context.Ventas
+                .Include(v => v.Detalles).ThenInclude(d => d.Producto)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (venta == null)
             {
