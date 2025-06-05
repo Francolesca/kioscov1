@@ -10,6 +10,7 @@ using System.Security.Claims;
 
 namespace kioscov1.Controllers
 {
+    [AllowAnonymous]
     public class AccesoController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,7 +23,6 @@ namespace kioscov1.Controllers
         {
             return View();
         }
-
         [HttpGet]
         public IActionResult Login()
         {
@@ -36,6 +36,7 @@ namespace kioscov1.Controllers
         public async Task<IActionResult> Login(LoginVM model) 
         {
             Usuario? usuario = await _context.Usuarios
+                .Include(u => u.Rol)
                 .Where(u => u.Nombre == model.Usuario)
                 .FirstOrDefaultAsync();
             if (usuario == null) 
@@ -52,7 +53,8 @@ namespace kioscov1.Controllers
             List<Claim> claims = new List<Claim>()
             {
                 new Claim (ClaimTypes.Name, usuario.Nombre),
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.Role, usuario.Rol.Nombre.ToString())
             };
 
             ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -75,6 +77,10 @@ namespace kioscov1.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Acceso");
+        }
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

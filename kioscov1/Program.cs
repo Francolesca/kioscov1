@@ -1,11 +1,15 @@
 using kioscov1.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AuthorizeFilter());
+});
 
 builder.Services.AddDbContext<AppDbContext>(o =>
 {
@@ -14,9 +18,11 @@ builder.Services.AddDbContext<AppDbContext>(o =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Acceso/Home";
+        options.LoginPath = "/Acceso/Login";
+        options.AccessDeniedPath = "/Acceso/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
+
 
 var app = builder.Build();
 

@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using kioscov1.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace kioscov1.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -15,6 +17,7 @@ namespace kioscov1.Controllers
 
         public IActionResult Index()
         {
+
             return View();
         }
 
