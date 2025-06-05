@@ -73,9 +73,31 @@ namespace kioscov1.Controllers
 
 
         // GET: Productos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string currentFilter,
+            string searchString,
+            int? pageNumber)
         {
-            return View(await _context.Productos.ToListAsync());
+            ViewData["SortOrder"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc": "";
+            ViewData["StockSortParm"] = sortOrder == "Stock" ? "stock_desc" : "Stock";
+            ViewData["CurrentFilter"] = searchString;
+            if(searchString != null)
+                pageNumber = 1;
+            else searchString = currentFilter;
+            var product = from l in _context.Productos select l;
+            if (!string.IsNullOrEmpty(searchString)) 
+                product = product.Where(s => s.Nombre.Contains(searchString));
+            int pageSize = 10;
+            product = sortOrder switch
+            {
+                "name_desc" => product.OrderByDescending(s => s.Nombre),
+                "Stock" => product.OrderBy(s => s.Stock),
+                "stock_desc" => product.OrderByDescending(s => s.Stock),
+                _ => product.OrderBy(s => s.Nombre),
+            };
+            return View(await Paginacion<Producto>.CreateAsync(product.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Productos/Details/5

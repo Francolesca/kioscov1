@@ -1,10 +1,10 @@
-﻿@model IEnumerable<kioscov1.Models.Entities.Producto>
+﻿@model Paginacion<kioscov1.Models.Entities.Producto>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Productos</h1>
 
 <p>
     <a asp-action="Create">Crear Nuevo</a>
@@ -12,23 +12,34 @@
 <p>
     <a asp-action="ControlStock">Control de Stock</a>
 </p>
-
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            <label>Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" /></label>
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-action="Index" class="btn btn-light">Back to Full List</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                Codigo
+                <a asp-action="Index">Codigo</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nombre)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Nombre</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Precio)
+                <a asp-action="Index">Precio</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Stock)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StockSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Stock</a>
             </th>
-            <th>Estado de Stock</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StockSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Estado Stock</a>
+
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -60,3 +71,22 @@
 }
     </tbody>
 </table>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-outline-dark @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-outline-dark @nextDisabled">
+    Next
+</a>
