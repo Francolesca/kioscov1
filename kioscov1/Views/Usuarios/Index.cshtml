@@ -4,14 +4,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
+<h1>Panel de Usuarios</h1>
+<div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
+    <a class="btn btn-primary" asp-controller="Usuarios" asp-action="Create">Crear Nuevo</a>
+    <a class="btn btn-primary" asp-controller="Usuarios" asp-action="ListaRoles">Roles</a>
+</div>
+@* <p>
     <a asp-controller="Usuarios" asp-action="Create">Crear Usuario</a>
 </p>
 <p>
     <a asp-controller="Usuarios" asp-action="ListaRoles">Roles</a>
-</p>
+</p> *@
 <table class="table">
     <thead>
         <tr>

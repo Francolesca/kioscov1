@@ -220,7 +220,7 @@ namespace kioscov1.Controllers
 
                     for (int i = 2; i < rowCount; i++)
                     {
-                        var codigo = int.TryParse(worksheet.Cells[i, 1].Text, out var c) ? c : 0;
+                        var codigo = worksheet.Cells[i, 1].Text;
                         var nombre = worksheet.Cells[i, 2].Text;
                         var precio = decimal.TryParse(worksheet.Cells[i,1].Text , out var p) ? p : 0;
 

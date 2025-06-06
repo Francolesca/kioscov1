@@ -7,11 +7,17 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<div id="seccionApertura" class="mb-3" style="display: none">
+<div id="seccionApertura" class="form-floating w-50" style="display: none">@* 
     <label for="montoInicial" class="form-label">Monto Inicial: </label>
-    <input type="number" value="0" id="montoInicial" step="0.01" class="form-control"/>
-    <button class="btn btn-success mt-2" id="btnAbrir" >Abrir turno de caja</button>
+    <input type="number" value="0" id="montoInicial" step="0.01" class="form-control"/> *@
+
+        <input type="number" class="form-control" id="montoInicial" step="100" placeholder="0" value="0">
+        <label for="montoInicial">Monto Inicial de caja</label>
+
+        <button class="btn btn-success mt-2" id="btnAbrir">Abrir turno de caja</button>
+
 </div>
+
 
 <div id="seccionCierre" class="mb-3" style="display: none">
     <button class="btn btn-danger" id="btnCerrar">Cerrar turno de caja</button>
