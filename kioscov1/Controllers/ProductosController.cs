@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using kioscov1.Models;
 using kioscov1.Models.Entities;
 using System.Security.Claims;
+using OfficeOpenXml;
+using System.IO;
+using OfficeOpenXml.Style;
+using System.Drawing;
 
 namespace kioscov1.Controllers
 {
@@ -189,6 +193,91 @@ namespace kioscov1.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(producto);
+        }
+
+        //GET
+        [HttpGet]
+        public IActionResult Importar()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Importar(IFormFile archivo)
+        {
+            if (archivo == null || archivo.Length == 0) {
+                ViewBag.Mensaje = "Seleccione un archivo valido.";
+                 return View();
+            }
+            var productos = new List<Producto>();
+            ExcelPackage.License.SetNonCommercialOrganization("<Your Noncommercial Organization>");
+            using (var stream = new MemoryStream())
+            {
+                await archivo.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream)) {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+
+                    for (int i = 2; i < rowCount; i++)
+                    {
+                        var codigo = int.TryParse(worksheet.Cells[i, 1].Text, out var c) ? c : 0;
+                        var nombre = worksheet.Cells[i, 2].Text;
+                        var precio = decimal.TryParse(worksheet.Cells[i,1].Text , out var p) ? p : 0;
+
+                        if (!string.IsNullOrEmpty(nombre))
+                        {
+                            productos.Add(
+                                new Producto
+                                {
+                                    CodigoBarra = codigo,
+                                    Nombre = nombre,
+                                    Precio = precio,
+                                    Stock = 0
+                                });
+                        }
+                    }
+                }
+            }
+            _context.Productos.AddRange(productos);
+            await _context.SaveChangesAsync();
+
+            ViewBag.Mensaje = $"{productos.Count} productos importados correctamente.";
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> Exportar()
+        {
+            var productos = await _context.Productos.ToListAsync();
+            ExcelPackage.License.SetNonCommercialOrganization("<Your Noncommercial Organization>");
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Productos");
+                worksheet.Cells[1, 1].Value = "Código";
+                worksheet.Cells[1, 2].Value = "Nombre";
+                worksheet.Cells[1, 3].Value = "Precio";
+
+                using (var range = worksheet.Cells[1, 1, 1, 3])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                }
+                int row = 2;
+                foreach (var p in productos)
+                {
+                    worksheet.Cells[row, 1].Value = p.CodigoBarra;
+                    worksheet.Cells[row, 2].Value = p.Nombre;
+                    worksheet.Cells[row, 3].Value = p.Precio;
+                    row++;
+                }
+                worksheet.Cells.AutoFitColumns();
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+                stream.Position = 0;
+                string nombreArchivo = $"Productos_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nombreArchivo);
+            }
         }
 
         // GET: Productos/Delete/5
