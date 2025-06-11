@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using kioscov1.Models;
+﻿using kioscov1.Models;
 using kioscov1.Models.Entities;
 using kioscov1.ViewsModel;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace kioscov1.Controllers
@@ -26,7 +21,8 @@ namespace kioscov1.Controllers
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (string.IsNullOrEmpty(userIdClaim)) {
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
                 return Unauthorized("No se pudo verificar el usuario.");
             }
 
@@ -40,8 +36,6 @@ namespace kioscov1.Controllers
             }
             else return View(turno.Ventas);
 
-
-            //return View(await _context.Ventas.ToListAsync());
         }
 
         // GET: Ventas1/Details/5
@@ -64,8 +58,16 @@ namespace kioscov1.Controllers
         }
 
         // GET: Ventas1/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var turno = await _context.TurnosCaja
+                .FirstOrDefaultAsync(t => t.UsuarioId == userIdClaim && t.Cierre == null);
+
+            if (turno == null) {
+                return RedirectToAction("Index");
+            }
             var productos = _context.Productos.ToList();
             ViewBag.Productos = productos;
 
@@ -77,7 +79,7 @@ namespace kioscov1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public  async Task<IActionResult> Create([FromBody] VentasVM model)
+        public async Task<IActionResult> Create([FromBody] VentasVM model)
         {
             var turno = await _context.TurnosCaja
                 .FirstOrDefaultAsync(t => t.UsuarioId == model.Venta.UsuarioId.ToString() && t.Cierre == null);

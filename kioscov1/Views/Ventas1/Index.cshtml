@@ -10,7 +10,7 @@
     <p>No existe un turno abierto, por favor abra un turno para comenzar a vender.</p>
 } else{
     <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
-        <a class="btn btn-primary" asp-action="Create">Nueva Venta</a>
+        <a class="btn btn-primary" asp-action="Create">➕ Nueva Venta</a>
     </div>
 
     <table class="table">
@@ -40,8 +40,8 @@
                         @Html.DisplayFor(modelItem => item.Importe)
                     </td>
                     <td>
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">ℹ️</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">❌</a>
                     </td>
                 </tr>
             }
