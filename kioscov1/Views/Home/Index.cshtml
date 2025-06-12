@@ -2,7 +2,84 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<div class="container mt-4">
+    <h2 class="mb-4">Bienvenido, @User.Identity.Name</h2>
+    <h4>Accesos rápidos</h4>
+    <div class="d-flex gap-2 mb-4">
+        <a class="btn btn-outline-primary" asp-controller="Ventas1" asp-action="Create">➕ Nueva Venta</a>
+        <a class="btn btn-outline-success" asp-controller="Productos" asp-action="Create">📦 Nuevo Producto</a>
+        <a class="btn btn-outline-secondary" asp-controller="Productos" asp-action="Importar">⬆️ Importar Excel</a>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="card text-bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Ventas Hoy</h5>
+                    <p class="card-text fs-4" id="ventasHoy">nada</p>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+
+    <div class="card-body" style="max-width: 700px">
+        <h5 class="card-title">Top Productos del Día</h5>
+        <canvas id="graficoProductosMasVendidos"></canvas>
+    </div>
+
+
+</div> 
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script >
+        $(document).ready(function(){
+            $.ajax({
+                url: '/Home/ObtenerDatos',
+                method: 'GET',
+                success: function(data){
+                    document.getElementById('ventasHoy').textContent = '$' + data.totalVentas;
+                    if (!data.topProducts || data.topProducts.length === 0) {
+                        console.warn("No hay productos vendidos hoy.");
+                        return;
+                    }
+                     const nombres = data.topProducts.map(p => p.nombre);
+                    const cantidades = data.topProducts.map(p => p.cantidadVenta);
+
+                    const ctx = document.getElementById('graficoProductosMasVendidos').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: nombres,
+                            datasets: [{
+                                label: 'Cantidad vendida hoy',
+                                data: cantidades,
+                                backgroundColor: 'rgba(200, 192, 192, 0.6)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        precision: 0
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
