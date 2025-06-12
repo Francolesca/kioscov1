@@ -30,12 +30,26 @@ namespace kioscov1.Controllers
             var today = DateTime.Today;
             var totalVentas = await _context.Ventas
                 .Where(v => v.Fecha.Date == today)
-                .SumAsync(v => (decimal?)v.Importe)  ?? 520;
-            var totalProductos = await _context.Productos.CountAsync();
+                .SumAsync(v => (decimal?)v.Importe)  ?? 0;
+
+            var topProducts = await _context.DetallesVenta
+                .Include(d => d.Producto)
+                .Include(d => d.Venta)
+                .Where(d => d.Venta.Fecha.Date == today)
+                .GroupBy(d => new { d.ProductoId, d.Producto.Nombre })
+                .Select(g => new
+                {
+                    nombre = g.Key.Nombre,
+                    cantidadVenta = g.Sum(d => d.Cantidad),
+                })
+                .OrderByDescending(p => p.cantidadVenta)
+                .Take(10)
+                .ToListAsync();
+
             var data = new
             {
                 totalVentas,
-                totalProductos,
+                topProducts
             };
             return Json(data);
         }
