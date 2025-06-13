@@ -1,0 +1,56 @@
+﻿@model kioscov1.Models.Entities.MovimientoStock
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Detalle de Control</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Fecha)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fecha)
+        </dd>
+        <dt class="col-sm-2">
+            Usuario
+        </dt>
+
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UsuarioId)
+        </dd>
+    </dl>
+</div>
+@if (Model.Detalles != null && Model.Detalles.Any())
+{
+    <h5>Productos vendidos</h5>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Stock Anterior</th>
+                <th>Stock Nuevo</th>
+                <th>Diferencia</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Detalles)
+            {
+                <tr>
+                    <td>@item.Producto?.Nombre</td>
+                    <td>@item.StockAnterior</td>
+                    <td>@item.StockNuevo</td>
+                    <td style="color:@(item.StockNuevo > item.StockAnterior ? "green" : "red")">
+                        @(item.StockNuevo - item.StockAnterior)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
