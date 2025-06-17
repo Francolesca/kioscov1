@@ -1,0 +1,41 @@
+﻿@model IEnumerable<kioscov1.Models.Entities.MovimientoStock>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Historial de Control de Stock</h1>
+
+<div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
+    <a class="btn btn-primary" asp-controller="Productos" asp-action="ControlStock">➕ Nuevo Control</a>
+</div>
+<p>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Fecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UsuarioId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UsuarioId)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Ver</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
