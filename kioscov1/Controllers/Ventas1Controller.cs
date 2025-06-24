@@ -93,18 +93,32 @@ namespace kioscov1.Controllers
             {
                 Venta oVenta = model.Venta;
                 oVenta.Detalles = model.Detalles;
+                var movimiento = new MovimientoStock
+                {
+                    Fecha = DateTime.Now,
+                    UsuarioId = turno.UsuarioId,
+                    Origen = "Venta",
+                    Detalles = new List<DetalleMovimientoStock>()
+                };
 
                 foreach (var d in model.Detalles)
                 {
                     var producto = await _context.Productos.FindAsync(d.ProductoId);
                     if (producto != null)
                     {
+                        movimiento.Detalles.Add(new DetalleMovimientoStock
+                        {
+                            ProductoId = producto.Id,
+                            StockAnterior = producto.Stock,
+                            StockNuevo = producto.Stock - d.Cantidad,
+                        });
                         producto.Stock -= d.Cantidad;
                         _context.Productos.Update(producto);
                     }
                 }
 
                 _context.Add(oVenta);
+                _context.MovimientosStock.Add(movimiento);
                 await _context.SaveChangesAsync();
 
                 return Ok(new { message = "Venta guardada correctamente", ventaId = oVenta.Id });
