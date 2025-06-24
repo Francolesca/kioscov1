@@ -12,6 +12,7 @@ using OfficeOpenXml;
 using System.IO;
 using OfficeOpenXml.Style;
 using System.Drawing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace kioscov1.Controllers
 {
@@ -45,6 +46,7 @@ namespace kioscov1.Controllers
             {
                 Fecha = DateTime.Now,
                 UsuarioId = userIdClaim,
+                Origen = "ControlStock",
                 Detalles = new List<DetalleMovimientoStock>()
             };
 
@@ -147,11 +149,12 @@ namespace kioscov1.Controllers
         // GET: Productos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var user = User.FindFirst(ClaimTypes.Role)?.Value;
             if (id == null)
             {
                 return NotFound();
             }
-
+            
             var producto = await _context.Productos.FindAsync(id);
             if (producto == null)
             {
@@ -165,8 +168,10 @@ namespace kioscov1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CodigoBarra,Nombre,Precio,Stock")] Producto producto)
         {
+
             if (id != producto.Id)
             {
                 return NotFound();

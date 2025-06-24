@@ -32,6 +32,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Productos" asp-action="Index">Productos</a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link text-dark dropdown-toggle" id="navbarDropdownProd" role="button" data-bs-toggle="dropdown" aria-expanded="false">Productos</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownProd">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="Index">Listar</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="ControlStock">Control de Stock</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="MovimientosStock" asp-action="Index">Movimientos de Stock</a></li>
+                            </ul>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Ventas1" asp-action="Index">Ventas</a>
                         </li>
@@ -41,8 +49,6 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="TurnoCaja" asp-action="Index">Abrir/Cerrar</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="TurnoCaja" asp-action="HistorialTurnos">Historial</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
                             </ul>
                         </li>
                     </ul>

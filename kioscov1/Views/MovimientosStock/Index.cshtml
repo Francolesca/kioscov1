@@ -9,6 +9,7 @@
 <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
     <a class="btn btn-primary" asp-controller="Productos" asp-action="ControlStock">➕ Nuevo Control</a>
 </div>
+
 <p>
 </p>
 <table class="table">
@@ -19,6 +20,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.UsuarioId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Origen)
             </th>
             <th></th>
         </tr>
@@ -31,6 +35,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UsuarioId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Origen)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Ver</a>
