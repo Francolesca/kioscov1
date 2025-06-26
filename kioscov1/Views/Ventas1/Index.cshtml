@@ -4,48 +4,53 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Ventas</h1>
+<h1 class="mb-4">Ventas</h1>
+
 @if (Model == null)
 {
-    <p>No existe un turno abierto, por favor abra un turno para comenzar a vender.</p>
-} else{
-    <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
-        <a class="btn btn-primary" asp-action="Create">➕ Nueva Venta</a>
+    <div class="alert alert-warning" role="alert">
+        <strong>Atención:</strong> No existe un turno abierto. Por favor, abra un turno para comenzar a vender.
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="text-muted">Listado de ventas realizadas</h5>
+        </div>
+        <a class="btn btn-primary btn-sm" asp-action="Create">
+            ➕ Nueva Venta
+        </a>
     </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Id)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Fecha)
-                </th>
-                <th>@Html.DisplayNameFor(model => model.Importe)</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark text-center">
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Id)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Fecha)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Importe)
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">ℹ️</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">❌</a>
-                    </td>
+                    <th>@Html.DisplayNameFor(model => model.First().Id)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Fecha)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().Importe)</th>
+                    <th>Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>$@item.Importe.ToString("N2")</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm me-1" title="Ver Detalles">
+                                ℹ️
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" title="Eliminar Venta">
+                                ❌
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

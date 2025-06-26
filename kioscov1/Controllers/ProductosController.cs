@@ -227,7 +227,7 @@ namespace kioscov1.Controllers
                     {
                         var codigo = worksheet.Cells[i, 1].Text;
                         var nombre = worksheet.Cells[i, 2].Text;
-                        var precio = decimal.TryParse(worksheet.Cells[i,1].Text , out var p) ? p : 0;
+                        var precio = decimal.TryParse(worksheet.Cells[i,3].Text , out var p) ? p : 0;
 
                         if (!string.IsNullOrEmpty(nombre))
                         {

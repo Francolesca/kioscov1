@@ -3,10 +3,22 @@
     ViewData["Title"] = "Control de Stock";
 }
 
-<h1>@ViewBag.Title</h1>
+<h1>@ViewData["Title"]</h1>
+
+<div class="mb-3 row">
+        <label for="filtroTabla" class="col-form-label col-sm-2">Buscar Producto: </label>
+        <div>
+            <input type="text" class="form-control" id="filtroTabla" placeholder="Ej: Gaseosa o Chocolate"/>
+        </div>
+</div>
+
+<button id="scrollToBottom" class="btn btn-primary rounded-circle shadow"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; width: 50px; height: 50px;">
+    ⬇
+</button>
 
 <table class="table table-bordered" id="tableStock">
-    <thead>
+    <thead class="table-dark">
         <tr>
             <th>Codigo</th>
             <th>Nombre</th>
@@ -20,7 +32,12 @@
                 <td>@p.CodigoBarra</td>
                 <td>@p.Nombre</td>
                 <td>
-                    <input type="number" class="form-control stock-input" value="@p.Stock" data-original="@p.Stock"/> 
+                    <input 
+                        type="number" 
+                        class="form-control stock-input"
+                        value="@p.Stock" 
+                        data-original="@p.Stock" 
+                        style="appearance: textfield;" />
                 </td>
             </tr>
         }
@@ -44,12 +61,16 @@
             let productosActualizados = [];
             $("#tableStock tbody tr").each(function(){
                 const id = $(this).data("id");
-                const stock = parseInt($(this).find(".stock-input").val());
+                const input = $(this).find(".stock-input");
+                const stockNvo = parseInt(input.val());
+                const stockOrig = parseInt(input.data("original"));
 
-                productosActualizados.push({
-                    Id: id,
-                    Stock: stock
-                });
+                if(stockNvo !== stockOrig){
+                    productosActualizados.push({
+                        Id: id,
+                        Stock: stockNvo
+                    });
+                }
             });
   
             console.log(productosActualizados);
@@ -82,6 +103,16 @@
                 $("#btnGuardarStock").prop("disabled", false);
          });
 
+         $("#filtroTabla").on("keyup", function() {
+             const text= $(this).val().toLowerCase();
+             $("#tableStock tbody tr").filter(function () {
+                 $(this).toggle($(this).text().toLowerCase().indexOf(text) > -1);
+             });
+         });
+
+         $("#scrollToBottom").on("click", function () {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        });
     </script>
 }
 

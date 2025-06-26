@@ -27,7 +27,7 @@ namespace kioscov1.Controllers
             }
 
             var turno = await _context.TurnosCaja
-                .Include(t => t.Ventas)
+                .Include(t => t.Ventas.OrderByDescending(v => v.Fecha))
                 .FirstOrDefaultAsync(t => t.UsuarioId == userIdClaim && t.Cierre == null);
 
             if (turno == null)
