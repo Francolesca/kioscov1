@@ -169,7 +169,7 @@ namespace kioscov1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CodigoBarra,Nombre,Precio,Stock")] Producto producto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CodigoBarra,Nombre,Precio")] Producto producto)
         {
 
             if (id != producto.Id)
