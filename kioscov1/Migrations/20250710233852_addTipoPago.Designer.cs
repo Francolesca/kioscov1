@@ -12,8 +12,8 @@ using kioscov1.Models;
 namespace kioscov1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250507002130_rework")]
-    partial class rework
+    [Migration("20250710233852_addTipoPago")]
+    partial class addTipoPago
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,35 @@ namespace kioscov1.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("kioscov1.Models.Entities.DetalleMovimientoStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MovimientoStockId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockAnterior")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockNuevo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovimientoStockId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("DetallesMovimientosStock");
+                });
 
             modelBuilder.Entity("kioscov1.Models.Entities.DetalleVenta", b =>
                 {
@@ -57,6 +86,32 @@ namespace kioscov1.Migrations
                     b.ToTable("DetallesVenta");
                 });
 
+            modelBuilder.Entity("kioscov1.Models.Entities.MovimientoStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comentario")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Origen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UsuarioId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MovimientosStock");
+                });
+
             modelBuilder.Entity("kioscov1.Models.Entities.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -65,8 +120,9 @@ namespace kioscov1.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CodigoBarra")
-                        .HasColumnType("int");
+                    b.Property<string>("CodigoBarra")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -83,6 +139,40 @@ namespace kioscov1.Migrations
                     b.ToTable("Productos");
                 });
 
+            modelBuilder.Entity("kioscov1.Models.Entities.TurnoCaja", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Apertura")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Cierre")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("MontoFinal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("MontoInicial")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UsuarioId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId1");
+
+                    b.ToTable("TurnosCaja");
+                });
+
             modelBuilder.Entity("kioscov1.Models.Entities.Venta", b =>
                 {
                     b.Property<int>("Id")
@@ -97,10 +187,19 @@ namespace kioscov1.Migrations
                     b.Property<decimal>("Importe")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("TipoPago")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TurnoCajaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TurnoCajaId");
 
                     b.ToTable("Ventas");
                 });
@@ -148,6 +247,25 @@ namespace kioscov1.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("kioscov1.Models.Entities.DetalleMovimientoStock", b =>
+                {
+                    b.HasOne("kioscov1.Models.Entities.MovimientoStock", "MovimientoStock")
+                        .WithMany("Detalles")
+                        .HasForeignKey("MovimientoStockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("kioscov1.Models.Entities.Producto", "Producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MovimientoStock");
+
+                    b.Navigation("Producto");
+                });
+
             modelBuilder.Entity("kioscov1.Models.Entities.DetalleVenta", b =>
                 {
                     b.HasOne("kioscov1.Models.Entities.Producto", "Producto")
@@ -158,11 +276,30 @@ namespace kioscov1.Migrations
 
                     b.HasOne("kioscov1.Models.Entities.Venta", "Venta")
                         .WithMany("Detalles")
-                        .HasForeignKey("VentaId");
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Producto");
 
                     b.Navigation("Venta");
+                });
+
+            modelBuilder.Entity("kioscov1.Models.Entities.TurnoCaja", b =>
+                {
+                    b.HasOne("kioscov1.Models.UserEntity.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId1");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("kioscov1.Models.Entities.Venta", b =>
+                {
+                    b.HasOne("kioscov1.Models.Entities.TurnoCaja", "TurnoCaja")
+                        .WithMany("Ventas")
+                        .HasForeignKey("TurnoCajaId");
+
+                    b.Navigation("TurnoCaja");
                 });
 
             modelBuilder.Entity("kioscov1.Models.UserEntity.Usuario", b =>
@@ -174,6 +311,16 @@ namespace kioscov1.Migrations
                         .IsRequired();
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("kioscov1.Models.Entities.MovimientoStock", b =>
+                {
+                    b.Navigation("Detalles");
+                });
+
+            modelBuilder.Entity("kioscov1.Models.Entities.TurnoCaja", b =>
+                {
+                    b.Navigation("Ventas");
                 });
 
             modelBuilder.Entity("kioscov1.Models.Entities.Venta", b =>

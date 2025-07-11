@@ -1,4 +1,6 @@
-﻿namespace kioscov1.Models.Entities
+﻿using kioscov1.Models.Enums;
+
+namespace kioscov1.Models.Entities
 {
     public class Venta
     {
@@ -8,7 +10,7 @@
         public decimal Importe { get; set; }
         public int? TurnoCajaId { get; set; }
         public TurnoCaja? TurnoCaja { get; set; }
-
         public ICollection<DetalleVenta>? Detalles { get; set; }
+        public TipoPago TipoPago { get; set; }
     }
 }

@@ -30,6 +30,7 @@ else
                     <th>@Html.DisplayNameFor(model => model.First().Id)</th>
                     <th>@Html.DisplayNameFor(model => model.First().Fecha)</th>
                     <th>@Html.DisplayNameFor(model => model.First().Importe)</th>
+                    <th>@Html.DisplayNameFor(model => model.First().TipoPago)</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -40,6 +41,7 @@ else
                         <td>@item.Id</td>
                         <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
                         <td>$@item.Importe.ToString("N2")</td>
+                        <td>@item.TipoPago.ToString()</td>
                         <td class="text-center">
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm me-1" title="Ver Detalles">
                                 ℹ️

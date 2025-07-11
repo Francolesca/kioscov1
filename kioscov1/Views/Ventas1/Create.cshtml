@@ -36,6 +36,14 @@
                         <label for="txtcantidad" class="form-label">Cantidad</label>
                         <input type="text" id="txtcantidad" class="form-control" value="1" />
                     </div>
+                    <div class="mb-3">
+                        <label asp-for="TipoPago" class="form-label">Tipo de Pago</label>
+                        <select asp-for="TipoPago" class="form-select" asp-items="Html.GetEnumSelectList<kioscov1.Models.Enums.TipoPago>()">
+                            <option value="">-- Seleccione Tipo de Pago --</option>
+                        </select>
+                        <span asp-validation-for="TipoPago" class="text-danger"></span>
+                    </div>
+
 
                     <div class="col-md-3 d-grid gap-2">
                         <button class="btn btn-success" id="btnAgregar">Agregar</button>
@@ -120,7 +128,7 @@
 
         $("#codigoBarras").on("keypress", function(e){
             if(e.which == 13){
-                var codigo = parseInt($(this).val().trim());
+                var codigo = $(this).val().trim();
                 const producto = productos.find(p => p.codigoBarra === codigo);
 
                 if (producto) {
@@ -156,7 +164,10 @@
 
         $("#btnTerminar").on("click", function(){
             var oDetalle = [];
-            var total = 0;
+            var total = 0;var fechan = new Date();
+            fechan = new Date(fechan.getTime() - (fechan.getTimezoneOffset() * 60000));
+            var fechanLocal = fechan.toISOString();
+
 
             $("#tbProducto > tbody > tr").each(function(i, tr){
                 oDetalle.push({
@@ -169,15 +180,13 @@
                 total = total + parseFloat($(tr).find('td:eq(4)').text());
             })
 
-            var fechan = new Date();
-            fechan = new Date(fechan.getTime() - (fechan.getTimezoneOffset() * 60000));
-            var fechanLocal = fechan.toISOString();
 
             var oVentaVM = {
                 Venta:{
                     fecha: fechanLocal,
                     usuarioId: parseInt('@User.FindFirst(ClaimTypes.NameIdentifier)?.Value'),
-                    importe: total
+                    importe: total,
+                    tipoPago: parseInt($("#TipoPago").val()),
                 },
                 Detalles: oDetalle.map(d => ({
                     ProductoId: d.productoId,

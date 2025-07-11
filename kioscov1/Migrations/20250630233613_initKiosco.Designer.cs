@@ -12,8 +12,8 @@ using kioscov1.Models;
 namespace kioscov1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250624230413_AddOrigenStocks")]
-    partial class AddOrigenStocks
+    [Migration("20250630233613_initKiosco")]
+    partial class initKiosco
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

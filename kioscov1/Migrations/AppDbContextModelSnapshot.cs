@@ -184,6 +184,10 @@ namespace kioscov1.Migrations
                     b.Property<decimal>("Importe")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("TipoPago")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("TurnoCajaId")
                         .HasColumnType("int");
 

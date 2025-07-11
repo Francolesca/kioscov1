@@ -1,4 +1,5 @@
 ﻿using kioscov1.Models.Entities;
+using kioscov1.Models.Enums;
 using kioscov1.Models.UserEntity;
 
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,12 @@ namespace kioscov1.Models
                 .HasMany(t => t.Ventas)
                 .WithOne(v => v.TurnoCaja)
                 .HasForeignKey(v => v.TurnoCajaId);
+
+            modelBuilder.Entity<Venta>()
+                .Property(v => v.TipoPago)
+                .HasConversion<string>();
         }
-        
+
     }
+
 }
