@@ -1,9 +1,11 @@
 ﻿using kioscov1.Models;
 using kioscov1.Models.UserEntity;
+using kioscov1.ViewsModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace kioscov1.Controllers
 {
@@ -71,5 +73,41 @@ namespace kioscov1.Controllers
             return View();
         }
 
+        public async Task<IActionResult> ChangePassword(int? id)
+        {
+            if (id == null) return NotFound();
+            var userIdClaim = int.Parse( User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if (userIdClaim != id) return Forbid();
+            
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null) return NotFound(); 
+
+            var model = new ChangePasswordVM { Id = usuario.Id };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var usuario = await _context.Usuarios.FindAsync(model.Id);
+            if (usuario == null) return NotFound();
+
+            if (usuario.Password != model.PasswordAct)
+            {
+                ModelState.AddModelError(string.Empty, "La contraseña actual es incorrecta.");
+                return View(model);
+            }
+
+            usuario.Password = model.PasswordNew;
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+            TempData["Mensaje"] = "Contraseña cambiada correctamente.";
+            return RedirectToAction("ChangePassword");
+        }
     }
 }
