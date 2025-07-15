@@ -1,5 +1,6 @@
 ﻿using kioscov1.Models;
 using kioscov1.Models.Entities;
+using kioscov1.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -57,6 +58,9 @@ namespace kioscov1.Controllers
                 return BadRequest("No hay turno abierto");
             
             turno.Cierre = DateTime.Now;
+            turno.MontoTransferencia = turno.Ventas
+                .Where(v => v.TipoPago == TipoPago.Transferencia)
+                .Sum(v => v.Importe);
             turno.MontoFinal = turno.MontoInicial + turno.Ventas.Sum(v => v.Importe);
 
             _context.Update(turno);
@@ -66,6 +70,7 @@ namespace kioscov1.Controllers
             {
                 MontoInicial = turno.MontoInicial,
                 MontoFinal = turno.MontoFinal,
+                MontoTransferencia = turno.MontoTransferencia,
                 TotalVentas = turno.Ventas.Count(),
                 FechaApertura = turno.Apertura,
                 FechaCierre = turno.Cierre

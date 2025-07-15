@@ -27,6 +27,12 @@
             @Html.DisplayFor(model => model.MontoInicial)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MontoTransferencia)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.MontoTransferencia)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MontoFinal)
         </dt>
         <dd class="col-sm-10">
@@ -42,6 +48,7 @@
             <tr>
                 <th>Horario de Venta</th>
                 <th>Importe Total</th>
+                <th>Tipo de pago</th>
             </tr>
         </thead>
         <tbody>
@@ -50,6 +57,7 @@
                 <tr>
                     <td>@item.Fecha</td>
                     <td>@item.Importe</td>
+                    <td>@item.TipoPago</td>
                 </tr>
             }
         </tbody>

@@ -17,7 +17,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Cierre)
             </th>
-            <th>@Html.DisplayNameFor(model => model.MontoFinal)</th>
+            <th>
+                @Html.DisplayNameFor(model => model.MontoTransferencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MontoFinal)
+             </th>
             <th></th>
         </tr>
     </thead>
@@ -33,6 +38,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Cierre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MontoTransferencia)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.MontoFinal)

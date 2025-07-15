@@ -10,6 +10,7 @@ namespace kioscov1.Models.Entities
         public DateTime Apertura { get; set; }
         public DateTime? Cierre { get; set; }
         public decimal MontoInicial { get; set; }
+        public decimal? MontoTransferencia { get; set; }
         public decimal? MontoFinal{ get; set; }
         public List<Venta> Ventas { get; set; }
     }
