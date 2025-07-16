@@ -1,5 +1,6 @@
 ﻿using kioscov1.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 
@@ -13,16 +14,35 @@ namespace kioscov1.Controllers
             _context = context;
          }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? fechaDesde, DateTime? fechaHasta, string origenFilter)
         {
-            var Movimientos = await _context.MovimientosStock
+            var query = _context.MovimientosStock
                 .Include(m => m.Detalles)
+                .AsQueryable();
+
+
+            if (fechaDesde.HasValue)
+                query = query.Where(m => m.Fecha >= fechaDesde.Value.Date);
+
+            if (fechaHasta.HasValue)
+                query = query.Where(m => m.Fecha <= fechaHasta.Value.Date.AddDays(1).AddTicks(-1));
+
+            if (!string.IsNullOrEmpty(origenFilter))
+                query = query.Where(m => m.Origen == origenFilter);
+
+            var movimientos = await query
                 .OrderByDescending(m => m.Fecha)
                 .ToListAsync();
+
+
+            //var Movimientos = await _context.MovimientosStock
+            //    .Include(m => m.Detalles)
+            //    .OrderByDescending(m => m.Fecha)
+            //    .ToListAsync();
             var usuariosDict = await _context.Usuarios
                 .ToDictionaryAsync(u => u.Id, u => u.Nombre);
 
-            foreach (var m in Movimientos)
+            foreach (var m in movimientos)
             {
                 if (int.TryParse(m.UsuarioId, out int userId) &&
                         usuariosDict.TryGetValue(userId, out var nombre))   
@@ -34,7 +54,17 @@ namespace kioscov1.Controllers
                     m.UsuarioId = "Desconocido";
                 }
             }
-            return View(Movimientos);
+            var origenes = await _context.MovimientosStock
+                .Select(m => m.Origen)
+                .Distinct()
+                .OrderBy(o => o)
+                .ToListAsync();
+
+            ViewBag.FechaDesde = fechaDesde?.ToString("yyyy-MM-dd");
+            ViewBag.FechaHasta = fechaHasta?.ToString("yyyy-MM-dd");
+            ViewBag.OrigenFiltro = origenFilter;
+            ViewBag.Origenes = new SelectList(origenes, selectedValue: origenFilter);
+            return View(movimientos);
         }
 
         public async Task<IActionResult> Details (int id)

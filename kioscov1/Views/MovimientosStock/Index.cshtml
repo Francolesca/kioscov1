@@ -4,11 +4,32 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Historial de Control de Stock</h1>
+<h1>Historial de Movimientos de Stock</h1>
 
 <div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
     <a class="btn btn-primary" asp-controller="Productos" asp-action="ControlStock">➕ Nuevo Control</a>
 </div>
+<form method="get" class="row g-3 mb-3">
+    <div class="col-auto">
+        <label for="fechaDesde" class="form-label">Desde:</label>
+        <input type="date" name="fechaDesde" class="form-control" value="@ViewBag.FechaDesde" />
+    </div>
+    <div class="col-auto">
+        <label for="fechaHasta" class="form-label">Hasta:</label>
+        <input type="date" name="fechaHasta" class="form-control" value="@ViewBag.FechaHasta" />
+    </div>
+    <div class="col-auto">
+        <label for="origenFilter" class="form-label">Origen:</label>
+        <select class="form-select" name="origenFilter" asp-items="ViewBag.Origenes">
+            <option value="">-- Todos --</option>
+        </select>
+    </div>
+    <div class="col-auto align-self-end">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a asp-action="Index" class="btn btn-secondary">Limpiar</a>
+    </div>
+
+</form>
 
 <p>
 </p>
