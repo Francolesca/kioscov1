@@ -139,6 +139,13 @@ namespace kioscov1.Controllers
         {
             if (ModelState.IsValid)
             {
+                bool existe = await _context.Productos
+                    .AnyAsync(p =>p.CodigoBarra == producto.CodigoBarra);
+                if (existe) {
+                    ModelState.AddModelError("", "Ya existe un producto con este código de barras");
+                    return View(producto);
+                }
+
                 _context.Add(producto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
