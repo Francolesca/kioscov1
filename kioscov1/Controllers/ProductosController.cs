@@ -76,7 +76,7 @@ namespace kioscov1.Controllers
             public int Id { get; set; }
             public int Stock { get; set; }
         }
-
+        
 
         // GET: Productos
         public async Task<IActionResult> Index(

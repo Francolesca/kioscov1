@@ -1,0 +1,225 @@
+﻿@model kioscov1.Models.Entities.Venta
+@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Create";
+}
+<h1 class="mb-4">Nuevo Movimiento</h1>
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-black text-white">
+                <strong>Cargar Productos</strong>
+            </div>
+
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="codigoBarras" class="form-label">Ingrese Código de Barra</label>
+                    <input type="text" class="form-control" id="codigoBarras" autofocus />
+                </div>
+
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label for="productoSelect" class="form-label">Producto</label>
+                        <select id="productoSelect" class="form-select">
+                            <option value="">-- Seleccione un producto --</option>
+                            @foreach (var producto in ViewBag.Productos)
+                            {
+                                <option value="@producto.Id" data-precio="@producto.Precio" data-nombre="@producto.Nombre">@producto.Nombre</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="txtcantidad" class="form-label">Cantidad</label>
+                        <input type="text" id="txtcantidad" class="form-control" value="1" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="comentario" class="form-label">Comentario</label>
+                        <input type="text" class="form-control" id="comentario"/>
+                    </div>
+
+                    <div class="col-md-3 d-grid gap-2">
+                        <button class="btn btn-success" id="btnAgregar">Agregar</button>
+                        <button class="btn btn-primary" id="btnTerminar">Terminar</button>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-sm" id="tbProducto">
+                        <thead class="table-dark text-center">
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Productos agregados -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mt-3 text-end">
+            <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const productos = @Html.Raw(Json.Serialize(ViewBag.Productos))
+        console.log(productos);
+
+         $(document).ready(function () {
+            $('#productoSelect').select2({
+                placeholder: "Buscar producto...",
+                allowClear: true
+            });
+        });
+
+        $("#btnAgregar").on("click",function(){
+            var productoId = $("#productoSelect").val();
+            var productoNombre = $("#productoSelect option:selected").data("nombre");
+            var cantidad = parseInt($("#txtcantidad").val());
+
+            if (!productoId) {
+                alert("Seleccione un producto.");
+                return;
+            }
+
+            if (isNaN(cantidad) || cantidad <= 0) {
+                alert("Ingrese una cantidad válida.");
+                return;
+            }
+
+
+            $("#tbProducto tbody").append(
+                $("<tr>").append(
+                    $("<td>").text(productoId),
+                    $("<td>").text(productoNombre),
+                    $("<td>").addClass("cantidad").text(cantidad),
+                    $("<td>").append(
+                        $('<button class="btn btn-sm btn-warning btnEditar me-1">Editar</button>'),
+                        $('<button class="btn btn-sm btn-danger btnEliminar">Eliminar</button>')
+                    )
+                )
+            );
+
+            console.log("Producto agregado:", productoNombre);
+
+            $("#txtcantidad").val("1");
+            $("#productoSelect").val("").trigger('change');
+            $("#codigoBarras").focus();
+        });
+
+        $("#codigoBarras").on("keypress", function(e){
+            if(e.which == 13){
+                var codigo = $(this).val().trim();
+                const producto = productos.find(p => p.codigoBarra === codigo);
+
+                if (producto) {
+                    var cantidad = parseInt($("#txtcantidad").val());
+                    const total = cantidad * producto.precio;
+
+                    $("#tbProducto tbody").append(
+                        $("<tr>").append(
+                            $("<td>").text(producto.id),
+                            $("<td>").text(producto.nombre),
+                            $("<td>").addClass("cantidad").text(cantidad),
+                            $("<td>").append(
+                                $('<button class="btn btn-sm btn-warning btnEditar me-1"> Editar </button>'),
+                                $('<button class="btn btn-sm btn-danger btnEliminar">Eliminar </button>')
+                            )
+                        )
+                    );
+
+                    $("#txtcantidad").val("1");
+                    $(this).val("").focus();
+
+                } else {
+                    alert("Producto no encontrado");
+                    $("#txtcantidad").val("1");
+                    $(this).val("").focus();
+                }
+            }
+
+        })
+
+        $("#btnTerminar").on("click", function(){
+            const comentario = $("#comentario").val().trim();
+                if (!comentario) {
+                    alert("El comentario es obligatorio.");
+                    return;
+                }
+            var oDetalle = [];
+            var fechan = new Date();
+            fechan = new Date(fechan.getTime() - (fechan.getTimezoneOffset() * 60000));
+            var fechanLocal = fechan.toISOString();
+
+            $("#tbProducto > tbody > tr").each(function(i, tr){
+                oDetalle.push({
+                    ProductoId: parseInt($(tr).find('td:eq(0)').text()),
+                    Cantidad: parseInt($(tr).find('td:eq(2)').text()),
+                })
+            })
+
+
+            var oMovimientoVM = {
+                MovimientoStock:{
+                    Fecha: fechanLocal,
+                    Origen: "Ingreso",
+                    Comentario: comentario
+                },
+                DetalleMovimientoStock: oDetalle,
+            };
+
+            console.log(oMovimientoVM);
+
+            $.ajax({
+                url:  '@Url.Action("CrearMovimientoStock", "MovimientosStock")',
+                type: "POST",
+                data: JSON.stringify(oMovimientoVM),
+                datatype: "json",
+                contentType: "application/json; charset=utf-8",
+                 success: function(data){
+                        alert(data.message);
+                        location.reload();
+                 },
+                 error: function(xhr, status, error){
+                        alert("Error al registrar el ingreso: " + xhr.responseText);
+                  }
+            });
+         });
+
+         $("#tbProducto").on("click", ".btnEliminar", function(){
+                 $(this).closest("tr").remove();
+                 actualizarTotalGeneral();
+          });
+
+          $("#tbProducto").on("click", ".btnEditar", function () {
+                const $row = $(this).closest("tr");
+                const cantidadActual = parseInt($row.find(".cantidad").text());
+                const nuevaCantidad = prompt("Editar cantidad:", cantidadActual);
+
+                if (nuevaCantidad !== null && !isNaN(nuevaCantidad) && parseInt(nuevaCantidad) > 0) {
+                    const precio = parseFloat($row.find("td:eq(3)").text());
+                    const total = parseInt(nuevaCantidad) * precio;
+
+                    $row.find(".cantidad").text(nuevaCantidad);
+                    $row.find(".total").text(total.toFixed(2));
+                    actualizarTotalGeneral();
+                }
+           });
+
+
+    </script>
+}

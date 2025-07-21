@@ -1,8 +1,12 @@
 ﻿using kioscov1.Models;
+using kioscov1.Models.Entities;
+using kioscov1.ViewsModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using System.Security.Claims;
+using static Microsoft.IO.RecyclableMemoryStreamManager;
 
 namespace kioscov1.Controllers
 {
@@ -142,5 +146,57 @@ namespace kioscov1.Controllers
 
         }
 
+        public IActionResult CrearMovimientoStock ()
+        {
+            var productos = _context.Productos.ToList();
+            ViewBag.Productos = productos;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CrearMovimientoStock([FromBody] MovimientoStockVM model)
+        {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+            if (model == null || model.DetalleMovimientoStock == null || !model.DetalleMovimientoStock.Any())
+            {
+                return BadRequest("No se recibieron detalles de movimiento.");
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var movimiento = new MovimientoStock
+            {
+                Fecha = model.MovimientoStock.Fecha,
+                Origen = model.MovimientoStock.Origen,
+                Comentario = model.MovimientoStock.Comentario,
+                UsuarioId = userId,
+                Detalles = new List<DetalleMovimientoStock>()
+            };
+
+            foreach (var d in model.DetalleMovimientoStock)
+            {
+                var producto = await _context.Productos.FindAsync(d.ProductoId);
+                if (producto != null)
+                {
+                    movimiento.Detalles.Add(new DetalleMovimientoStock
+                    {
+                        ProductoId = producto.Id,
+                        StockAnterior = producto.Stock,
+                        StockNuevo = producto.Stock + d.Cantidad,
+                    });
+                    producto.Stock += d.Cantidad;
+                    _context.Productos.Update(producto);
+                }
+
+
+            }
+
+            _context.MovimientosStock.Add(movimiento);
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Ingreso guardado correctamente" });
+
+        }
     }
 }
