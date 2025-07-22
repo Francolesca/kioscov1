@@ -2,57 +2,57 @@
 @{
     ViewData["Title"] = "Control de Stock";
 }
-
-<h1>@ViewData["Title"]</h1>
-
-<div class="mb-3 row">
-        <label for="filtroTabla" class="col-form-label col-sm-2">Buscar Producto: </label>
-        <div>
-            <input type="text" class="form-control" id="filtroTabla" placeholder="Ej: Gaseosa o Chocolate"/>
+<div class="container my-4">
+    <h2 class="mb-4">
+        <i class="bi bi-clipboard-check me-2"></i>@ViewData["Title"]
+    </h2>
+    <div class="row mb-4">
+        <label for="filtroTabla" class="col-sm-2 col-form-label">Buscar Producto:</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" id="filtroTabla" placeholder="Ej: Gaseosa o Chocolate" />
         </div>
-</div>
-
-<button id="scrollToBottom" class="btn btn-primary rounded-circle shadow"
-        style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; width: 50px; height: 50px;">
-    ⬇
-</button>
-
-<table class="table table-bordered" id="tableStock">
-    <thead class="table-dark">
-        <tr>
-            <th>Codigo</th>
-            <th>Nombre</th>
-            <th>Stock</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var p in Model) {
-
-            <tr data-id="@p.Id">
-                <td>@p.CodigoBarra</td>
-                <td>@p.Nombre</td>
-                <td>
-                    <input 
-                        type="number" 
-                        class="form-control stock-input"
-                        value="@p.Stock" 
-                        data-original="@p.Stock" 
-                        style="appearance: textfield;" />
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<button class="btn btn-success" id="btnGuardarStock">Guardar cambios</button>
-<div id="spinner" class="mt-2" style="display: none;">
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Guardando...</span>
     </div>
-    <span class="ms-2">Guardando cambios...</span>
-</div>
-<button class="btn btn-danger" id="cancelar">Cancelar</button>
+    <button id="scrollToBottom" class="btn btn-primary rounded-circle shadow"
+            style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; width: 50px; height: 50px;">
+        <i class="bi bi-arrow-down"></i>
+    </button>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow-sm" id="tableStock">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr data-id="@p.Id">
+                        <td>@p.CodigoBarra</td>
+                        <td>@p.Nombre</td>
+                        <td class="text-center">
+                            <input type="number"
+                                   class="form-control text-center stock-input"
+                                   value="@p.Stock"
+                                   data-original="@p.Stock"
+                                   style="appearance: textfield; max-width: 100px; margin: auto;" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex gap-3 mt-4">
+        <button class="btn btn-success px-4" id="btnGuardarStock">
+            <i class="bi bi-save"></i> Guardar cambios
+        </button>
 
+        <button class="btn btn-outline-danger px-4" id="cancelar">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+    </div>
+</div>
 @section Scripts {
     <script>
         $("#btnGuardarStock").on("click", function () {
@@ -87,7 +87,6 @@
                     alert("Error al guardar el stock.");
                 },
                 complete: function() {
-                    $("#spinner").hide();
                     $("#btnGuardarStock").prop("disabled", false);
                 }
             });
@@ -98,9 +97,8 @@
                     const original = $(this).data("original");
                     $(this).val(original);
                 });
-
-                $("#spinner").hide();
                 $("#btnGuardarStock").prop("disabled", false);
+                window.location.href = "/Productos/Index";
          });
 
          $("#filtroTabla").on("keyup", function() {

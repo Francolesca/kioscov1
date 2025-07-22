@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Create";
 }
-<h1 class="mb-4">Nueva Venta</h1>
+<h1 class="bi bi-currency-dollar me-2">Nueva Venta</h1>
 <hr />
 
 <div class="row justify-content-center">
@@ -50,6 +50,9 @@
                         <button class="btn btn-primary" id="btnTerminar">Terminar</button>
                     </div>
                 </div>
+                <div class="text-end mt-3">
+                    <h5><strong>Total: $<span id="totalGeneral">0.00</span></strong></h5>
+                </div>
 
                 <hr class="my-4" />
 
@@ -71,9 +74,7 @@
                     </table>
                 </div>
 
-                <div class="text-end mt-3">
-                    <h5><strong>Total: $<span id="totalGeneral">0.00</span></strong></h5>
-                </div>
+
             </div>
         </div>
 

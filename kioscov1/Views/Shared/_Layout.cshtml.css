@@ -8,7 +8,8 @@ a.navbar-brand {
 }
 
 a {
-  color: #0077cc;
+    color: linear-gradient(135deg, #2f3542, #1e272e);
+    ;
 }
 
 .btn-primary {

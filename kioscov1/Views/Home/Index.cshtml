@@ -2,49 +2,62 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Bienvenido, @User.Identity.Name</h2>
-    <h4>Accesos rápidos</h4>
-    <div class="d-flex gap-2 mb-4">
-        <a class="btn btn-outline-primary" asp-controller="Ventas1" asp-action="Create">➕ Nueva Venta</a>
-        <a class="btn btn-outline-success" asp-controller="Productos" asp-action="Create">📦 Nuevo Producto</a>
-        <a class="btn btn-outline-secondary" asp-controller="Productos" asp-action="Exportar">📤 Exportar Productos</a>
+<div class="container my-4">
+    <h2 class="mb-4">
+        <i class="bi bi-house-door-fill me-2"></i>Bienvenido, @User.Identity.Name
+    </h2>
+
+    <h4 class="mb-3">Accesos rápidos</h4>
+    <div class="d-flex gap-3 flex-wrap mb-4">
+        <a class="btn btn-outline-primary btn-lg" asp-controller="Ventas1" asp-action="Create">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Venta
+        </a>
+        <a class="btn btn-outline-success btn-lg" asp-controller="Productos" asp-action="Create">
+            <i class="bi bi-box-seam me-1"></i> Nuevo Producto
+        </a>
+        <a class="btn btn-outline-secondary btn-lg" asp-controller="Productos" asp-action="Exportar">
+            <i class="bi bi-upload me-1"></i> Exportar Productos
+        </a>
     </div>
 
-    <div class="row mb-3">
+    <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card text-bg-success mb-3">
-                <div class="card-body">
+            <div class="card text-bg-success shadow-sm h-100">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
                     <h5 class="card-title">Ventas Hoy</h5>
-                    <p class="card-text fs-4" id="ventasHoy">nada</p>
+                    <p class="card-text fs-3 fw-bold" id="ventasHoy">Cargando...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Top Productos del Día</h5>
+                    <canvas id="graficoProductosMasVendidos" style="max-height: 350px;"></canvas>
                 </div>
             </div>
         </div>
     </div>
- </div>
+</div>
 
-    <div class="card-body" style="max-width: 700px">
-        <h5 class="card-title">Top Productos del Día</h5>
-        <canvas id="graficoProductosMasVendidos"></canvas>
-    </div>
-
-
-</div> 
-@section Scripts{
+@section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script >
-        $(document).ready(function(){
+    <script>
+        $(document).ready(function () {
             $.ajax({
                 url: '/Home/ObtenerDatos',
                 method: 'GET',
-                success: function(data){
-                    document.getElementById('ventasHoy').textContent = '$' + data.totalVentas;
+                success: function (data) {
+                    document.getElementById('ventasHoy').textContent = '$' + data.totalVentas.toLocaleString();
+
                     if (!data.topProducts || data.topProducts.length === 0) {
                         console.warn("No hay productos vendidos hoy.");
                         return;
                     }
-                     const nombres = data.topProducts.map(p => p.nombre);
+
+                    const nombres = data.topProducts.map(p => p.nombre);
                     const cantidades = data.topProducts.map(p => p.cantidadVenta);
 
                     const ctx = document.getElementById('graficoProductosMasVendidos').getContext('2d');
@@ -55,8 +68,8 @@
                             datasets: [{
                                 label: 'Cantidad vendida hoy',
                                 data: cantidades,
-                                backgroundColor: 'rgba(200, 192, 192, 0.6)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
                                 borderWidth: 1
                             }]
                         },

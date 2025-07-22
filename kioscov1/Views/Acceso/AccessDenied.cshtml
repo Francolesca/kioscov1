@@ -1,4 +1,15 @@
-﻿<h1>Lo sentimos</h1>
-<h3>No tienes permisos suficientes para acceder a esta seccion.</h3>
-@{
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<div class="d-flex flex-column align-items-center justify-content-center text-center" style="height: 70vh;">
+    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828843.png" alt="Acceso denegado" width="120" class="mb-4" />
+
+    <h1 class="display-4 text-danger">Acceso Denegado</h1>
+    <h4 class="mb-3">No tenés permisos suficientes para acceder a esta sección.</h4>
+    <p class="text-muted mb-4">Si creés que se trata de un error, comunicate con el administrador.</p>
+
+    <a href="@(Url.Action("Index", "Home"))" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left"></i> Volver al inicio
+    </a>
+</div>

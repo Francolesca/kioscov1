@@ -1,69 +1,71 @@
 ﻿@model IEnumerable<kioscov1.Models.Entities.MovimientoStock>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Historial de Movimientos de Stock";
 }
 
-<h1>Historial de Movimientos de Stock</h1>
+<div class="container my-4">
+    <h2 class="mb-4">
+        <i class="bi bi-boxes me-2"></i>@ViewData["Title"]
+    </h2>
 
-<div class="btn-group btn-group-sm" role="group" aria-label="Button group with nested dropdown">
-    <a class="btn btn-primary" asp-controller="Productos" asp-action="ControlStock">➕ Nuevo Control</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a class="btn btn-success" asp-controller="Productos" asp-action="ControlStock">
+            <i class="bi bi-plus-circle"></i> Nuevo Control
+        </a>
+    </div>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label for="fechaDesde" class="form-label">Desde</label>
+            <input type="date" name="fechaDesde" class="form-control" value="@ViewBag.FechaDesde" />
+        </div>
+        <div class="col-md-3">
+            <label for="fechaHasta" class="form-label">Hasta</label>
+            <input type="date" name="fechaHasta" class="form-control" value="@ViewBag.FechaHasta" />
+        </div>
+        <div class="col-md-3">
+            <label for="origenFilter" class="form-label">Origen</label>
+            <select class="form-select" name="origenFilter" asp-items="ViewBag.Origenes">
+                <option value="">-- Todos --</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                Limpiar
+            </a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered text-center align-middle shadow-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Fecha)</th>
+                    <th>@Html.DisplayNameFor(model => model.UsuarioId)</th>
+                    <th>@Html.DisplayNameFor(model => model.Origen)</th>
+                    <th>@Html.DisplayNameFor(model => model.Comentario)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.UsuarioId</td>
+                        <td>@item.Origen</td>
+                        <td>@item.Comentario</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Ver
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
-<form method="get" class="row g-3 mb-3">
-    <div class="col-auto">
-        <label for="fechaDesde" class="form-label">Desde:</label>
-        <input type="date" name="fechaDesde" class="form-control" value="@ViewBag.FechaDesde" />
-    </div>
-    <div class="col-auto">
-        <label for="fechaHasta" class="form-label">Hasta:</label>
-        <input type="date" name="fechaHasta" class="form-control" value="@ViewBag.FechaHasta" />
-    </div>
-    <div class="col-auto">
-        <label for="origenFilter" class="form-label">Origen:</label>
-        <select class="form-select" name="origenFilter" asp-items="ViewBag.Origenes">
-            <option value="">-- Todos --</option>
-        </select>
-    </div>
-    <div class="col-auto align-self-end">
-        <button type="submit" class="btn btn-primary">Filtrar</button>
-        <a asp-action="Index" class="btn btn-secondary">Limpiar</a>
-    </div>
-
-</form>
-
-<p>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Fecha)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UsuarioId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Origen)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fecha)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UsuarioId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Origen)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Ver</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
