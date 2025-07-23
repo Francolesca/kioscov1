@@ -38,11 +38,6 @@ namespace kioscov1.Controllers
                 .OrderByDescending(m => m.Fecha)
                 .ToListAsync();
 
-
-            //var Movimientos = await _context.MovimientosStock
-            //    .Include(m => m.Detalles)
-            //    .OrderByDescending(m => m.Fecha)
-            //    .ToListAsync();
             var usuariosDict = await _context.Usuarios
                 .ToDictionaryAsync(u => u.Id, u => u.Nombre);
 

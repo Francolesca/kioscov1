@@ -93,14 +93,26 @@ namespace kioscov1.Controllers
             return Ok(new {tieneTurnoAbierto});
         }
 
-        public async Task<IActionResult> HistorialTurnos()
+        public async Task<IActionResult> HistorialTurnos(DateTime? fechaDesde, DateTime? fechaHasta)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim))
                 return Unauthorized("No se pudo identificar el usuario.");
-            var hTurnos = await _context.TurnosCaja
+
+            var query =  _context.TurnosCaja.AsQueryable();
+
+            if (fechaDesde.HasValue ) 
+                query = query.Where(t => t.Apertura >= fechaDesde.Value.Date);
+
+            if(fechaHasta.HasValue )
+                query = query.Where(t => t.Apertura <= fechaHasta.Value.Date.AddDays(1).AddTicks(-1));
+
+            var hTurnos = await query
                 .OrderByDescending(t => t.Apertura)
                 .ToListAsync();
+
+            ViewBag.FechaDesde = fechaDesde?.ToString("yyyy-MM-dd");
+            ViewBag.FechaHasta = fechaHasta?.ToString("yyyy-MM-dd");
             return View(hTurnos);
         }
 

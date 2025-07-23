@@ -7,6 +7,24 @@
     <h2 class="mb-4">
         <i class="bi bi-clock-history me-2"></i>@ViewData["Title"]
     </h2>
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label for="fechaDesde" class="form-label">Desde</label>
+            <input type="date" name="fechaDesde" class="form-control" value="@ViewBag.FechaDesde" />
+        </div>
+        <div class="col-md-3">
+            <label for="fechaHasta" class="form-label">Hasta</label>
+            <input type="date" name="fechaHasta" class="form-control" value="@ViewBag.FechaHasta" />
+        </div>
+        <div class="col-md-3 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+            <a asp-action="HistorialTurnos" class="btn btn-outline-secondary w-100">
+                Limpiar
+            </a>
+        </div>
+    </form>
 
     <div class="table-responsive">
         <table class="table table-striped table-hover table-bordered align-middle text-center shadow-sm">
